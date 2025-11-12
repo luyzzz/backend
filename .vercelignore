@@ -1,0 +1,41 @@
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Database
+*.db
+.db/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+docker-compose.yml
+Dockerfile
+
+# Git
+.git/
+.gitignore
+
+# Scripts locais
+start_app.bat
+create_admin.py
+update_database.py
+
+# Uploads (se tiver muitos arquivos grandes)
+# static/uploads/
+
+# Outros
+.DS_Store
+*.log
