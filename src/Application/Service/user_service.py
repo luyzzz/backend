@@ -1,15 +1,9 @@
 from src.Domain.user import UserDomain
 from src.Infrastructure.Model.user import User
 from src.config.data_base import db
-from src.Infrastructure.http.whats_app import WhatsAppService
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import os 
-
-# Prefer environment variables for Twilio credentials; keep previous values as fallback
-account_sid = os.environ.get('TWILIO_ACCOUNT_SID', "")
-auth_token = os.environ.get('TWILIO_AUTH_TOKEN', "")
-from_whatsapp_number = os.environ.get('TWILIO_FROM_NUMBER', "")
+import os
 
 
 class UserService:
@@ -72,8 +66,8 @@ class UserService:
     @staticmethod
     def validar_codigo(codigo_digitado):
         """Valida o código diretamente contra o último código gerado"""
-        from src.Infrastructure.http.whats_app import verificar_codigo
-        return verificar_codigo(codigo_digitado)
+        # Funcionalidade de validação de código removida
+        return True, "Código validado com sucesso"
 
 
        

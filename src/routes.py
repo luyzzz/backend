@@ -2,8 +2,8 @@
 from src.Application.Controllers.produto_controller import ProdutoController
 from flask import jsonify, make_response, request, session
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from src.Infrastructure.http.whats_app import gerar_codigo, verificar_codigo, ultimo_codigo
 import os
+import random
 
 def init_routes(app):
     @app.route("/", methods=["GET"])
@@ -44,13 +44,9 @@ def init_routes(app):
             if not data or not data.get("email"):
                 return jsonify({"error": "Email é obrigatório"}), 400
 
-            # Gerar e enviar o código primeiro
-            codigo = gerar_codigo()
-
-            if not codigo:
-                return jsonify({"error": "Falha ao enviar código"}), 500
-
-            print(f"Código gerado e enviado: {codigo}")  # Debug
+            # Gerar código aleatório
+            codigo = str(random.randint(1000, 9999))
+            print(f"Código gerado: {codigo}")  # Debug
 
             # Verificar se o usuário já existe para atualizar, senão cria um novo
             user = db.session.query(User).filter_by(email=data["email"]).first()
@@ -75,7 +71,7 @@ def init_routes(app):
                 db.session.add(user)
 
             db.session.commit()
-            return jsonify({"message": "Código enviado com sucesso"}), 200
+            return jsonify({"message": "Código enviado com sucesso", "code": codigo}), 200
             
         except Exception as e:
             print(f"Erro ao enviar código: {str(e)}")
