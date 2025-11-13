@@ -31,12 +31,16 @@ def create_app():
     except Exception as e:
         print(f"❌ Erro ao inicializar banco: {e}")
         # Em produção, não falha se banco não conectar (pode precisar de configuração)
-        if os.getenv('VERCEL_ENV') != 'production':
+        is_production = os.getenv('VERCEL_ENV') == 'production' or os.getenv('RENDER') == 'true'
+        if not is_production:
             raise
 
     # Inicializa rotas
     init_routes(app)
 
+    # Detecta ambiente de produção
+    is_production = os.getenv('VERCEL_ENV') == 'production' or os.getenv('RENDER') == 'true'
+    
     with app.app_context():
         try:
             # Importe TODOS os modelos antes do create_all
@@ -45,19 +49,22 @@ def create_app():
             from src.Infrastructure.Model.order import Order  # noqa: F401
             from src.Infrastructure.Model.order_item import OrderItem  # noqa: F401
             
-            # Cria tabelas (em produção, assuma que já existem)
-            db.create_all()
-            print("✅ Tabelas verificadas")
-            
-            # Criar usuário admin se não existir
-            from src.Application.Service.user_service import UserService
-            UserService.create_admin_if_not_exists()
-            print("✅ Usuário admin verificado")
+            # Só tenta criar tabelas em desenvolvimento
+            if not is_production:
+                db.create_all()
+                print("✅ Tabelas criadas/verificadas")
+                
+                # Criar usuário admin se não existir (só em dev)
+                from src.Application.Service.user_service import UserService
+                UserService.create_admin_if_not_exists()
+                print("✅ Usuário admin verificado")
+            else:
+                print("ℹ️ Modo produção: assumindo que tabelas já existem")
             
         except Exception as e:
             print(f"❌ Erro na inicialização: {e}")
             # Log do erro mas não falha em produção
-            if os.getenv('VERCEL_ENV') != 'production':
+            if not is_production:
                 raise
 
     return app

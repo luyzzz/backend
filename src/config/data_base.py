@@ -35,7 +35,9 @@ def init_db(app):
         }
         
         # Verifica se está em ambiente de produção
-        is_production = os.getenv('VERCEL_ENV') == 'production' or os.getenv('FLASK_ENV') == 'production'
+        is_production = (os.getenv('VERCEL_ENV') == 'production' or 
+                        os.getenv('FLASK_ENV') == 'production' or 
+                        os.getenv('RENDER') == 'true')
         
         try:
             # Em produção, não tenta criar database (assume que já existe)
@@ -55,9 +57,5 @@ def init_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Inicializa a conexão do Flask-SQLAlchemy
-    try:
-        db.init_app(app)
-        print("✓ Banco de dados inicializado com sucesso")
-    except Exception as e:
-        print(f"❌ Erro ao inicializar banco: {e}")
-        raise
+    db.init_app(app)
+    print("✓ Banco de dados configurado")
